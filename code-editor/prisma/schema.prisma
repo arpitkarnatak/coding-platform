@@ -18,8 +18,7 @@ model Problem {
   title           String
   difficulty      String
   tags            Json
-  details         ProblemDetail @relation(fields: [problemDetailId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  problemDetailId String @unique
+  details         ProblemDetail @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model ProblemDetail {

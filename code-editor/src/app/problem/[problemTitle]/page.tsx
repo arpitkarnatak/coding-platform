@@ -46,25 +46,17 @@ export default async function ProblemPage({
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel defaultSize={50}>
           <h1 className="text-2xl font-bold">{problem.title}</h1>
-          {problem.difficulty}
+          <ProblemTag content={problem.difficulty} />
+
           <p>{problem.details.description}</p>
-          <Tabs defaultValue="0" className="w-[400px]">
-            <TabsList>
-              {problem.details.examples.map((_, index) => (
-                <TabsTrigger key={index} value={index.toString()}>
-                  Testcase {index}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            {problem.details.examples.map((testcase, index) => (
-              <TabsContent value={index.toString()} key={index}>
-                <div>
-                  <p className="font-bold">{testcase.input}</p>
-                  <p>{testcase.output}</p>
-                </div>
-              </TabsContent>
-            ))}
-          </Tabs>
+          <h1>Examples</h1>
+
+          {problem.details.examples.map((example, index) => (
+            <div key={index}>
+              <div>{example.input}</div>
+              <div>{example.output}</div>
+            </div>
+          ))}
           <h1>Tags</h1>
           <div className="flex flex-wrap w-full gap-2">
             {problem.tags.map((tag) => (
@@ -74,12 +66,36 @@ export default async function ProblemPage({
         </ResizablePanel>
         <ResizableHandle />
         <ResizablePanel defaultSize={50}>
-          <div className="h-full w-full">
-            <EditorWindow
-              language="python"
-              boilerplateCode={problem.details.boilerplateCode}
-            />
-          </div>
+          <ResizablePanelGroup direction="vertical">
+            <ResizablePanel defaultSize={60}>
+              <div className="h-full w-full">
+                <EditorWindow
+                  language="python"
+                  boilerplateCode={problem.details.boilerplateCode}
+                />
+              </div>
+            </ResizablePanel>
+            <ResizableHandle />
+            <ResizablePanel defaultSize={40}>
+              <Tabs defaultValue="0" className="w-[400px]">
+                <TabsList>
+                  {problem.details.examples.map((_, index) => (
+                    <TabsTrigger key={index} value={index.toString()}>
+                      Testcase {index}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+                {problem.details.examples.map((testcase, index) => (
+                  <TabsContent value={index.toString()} key={index}>
+                    <div>
+                      <p className="font-bold">{testcase.input}</p>
+                      <p>{testcase.output}</p>
+                    </div>
+                  </TabsContent>
+                ))}
+              </Tabs>
+            </ResizablePanel>
+          </ResizablePanelGroup>
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>

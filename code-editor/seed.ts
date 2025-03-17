@@ -186,7 +186,6 @@ async function seedDatabase() {
           title: problem.name,
           difficulty: getDifficultyLevel(problem),
           tags: getTagsForProblem(problem),
-          problemDetailId: detailId,
         }
       });
 

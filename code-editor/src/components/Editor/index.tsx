@@ -11,16 +11,21 @@ interface EditorWindowProps {
 export default function EditorWindow(props: EditorWindowProps) {
   const [code, setCode] = useState(props.boilerplateCode);
   return (
-    <Editor
-      defaultLanguage={props.language}
-      height={"100%"}
-      width={"100%"}
-      value={code}
-      theme="vs-dark"
-      onChange={(e) => {
-        setCode(e ?? "");
-      }}
-    />
+    <div className="h-full w-full">
+      <div className="w-full border border-1">
+        <p>Python</p>
+      </div>
+      <Editor
+        defaultLanguage={props.language}
+        height={"100%"}
+        width={"100%"}
+        value={code}
+        theme="vs-dark"
+        onChange={(e) => {
+          setCode(e ?? "");
+        }}
+      />
+    </div>
   );
 }
 
