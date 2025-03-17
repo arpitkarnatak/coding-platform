@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Editor } from "@monaco-editor/react";
 
 interface EditorWindowProps {
@@ -9,12 +9,13 @@ interface EditorWindowProps {
 }
 
 export default function EditorWindow(props: EditorWindowProps) {
+  const [code, setCode] = useState(props.boilerplateCode);
   return (
     <Editor
       defaultLanguage={props.language}
       height={"100%"}
       width={"100%"}
-      value={props.boilerplateCode}
+      value={code}
       theme="vs-dark"
     />
   );

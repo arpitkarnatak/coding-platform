@@ -1,58 +1,86 @@
 import EditorWindow from "@/components/Editor";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
 import React from "react";
+import { z } from "zod";
 
-const problem = {
-  name: "Array Sum Pairs",
-  description:
-    "Given an array of integers and a target value, find all pairs of elements in the array that sum to the target value. Return an array of arrays, where each inner array contains a pair of numbers that sum to the target. Each pair should only be included once, and the order of pairs doesn't matter.",
-  examples: [
-    {
-      input: "1 5 6 1 0 1\n6",
-      output: "[[1, 5], [0, 6]]",
-    },
-    {
-      input: "3 4 5 6 7\n10",
-      output: "[[3, 7], [4, 6]]",
-    },
-    {
-      input: "1 2 3 4\n10",
-      output: "[]",
-    },
-  ],
-  hiddenTests: [
-    {
-      input: "-2 -1 0 1 2 3 4 5\n3",
-      output: "[[-2, 5], [-1, 4], [0, 3], [1, 2]]",
-    },
-    {
-      input: "5 5 5 5\n10",
-      output: "[[5, 5]]",
-    },
-  ],
-  runnerCode:
-    "def run_test(input_string):\n    lines = input_string.strip().split('\\n')\n    array = list(map(int, lines[0].split()))\n    target = int(lines[1])\n    \n    # User will implement find_pairs function\n    result = find_pairs(array, target)\n    \n    # Convert result to string format matching the expected output\n    return str(result)",
-};
+const ProblemSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  examples: z
+    .object({
+      input: z.string(),
+      output: z.string(),
+    })
+    .array(),
+  hiddenTests: z
+    .object({
+      input: z.string(),
+      output: z.string(),
+    })
+    .array(),
+  runnerCode: z.string(),
+  boilerplateCode: z.string(),
+  // Add other fields as needed
+});
 
+// Type inference from the schema
+type Problem = z.infer<typeof ProblemSchema>;
+
+async function fetchProblem(problemTitle: string): Promise<Problem> {
+  // TODO: Replace w/ Base URL
+  const response = await fetch(
+    `http://localhost:3000/api/v1/problem/${problemTitle}`
+  );
+
+  const data = await response.json();
+
+  // Validate the response data against the schema
+  const result = ProblemSchema.safeParse(data);
+  if (!result.success) {
+    // Handle validation errors
+    console.error("API response validation failed:", result.error.format());
+    throw new Error("Invalid API response format");
+  }
+
+  // Return the validated data
+  return result.data;
+}
 export default async function ProblemPage({
   params,
 }: {
   params: Promise<{ problemTitle: string }>;
 }) {
   const { problemTitle } = await params;
+  // TODO: Replace w/ Base URL
+  const problem = await fetchProblem(problemTitle);
   return (
     <div className="h-screen">
-      My Problem: {problemTitle}
-      <h1 className="text-2xl font-bold">{problem.name}</h1>
-      <p>{problem.description}</p>
-      {problem.examples.map((testcase, index) => (
-        <div key={index}>
-          <p className="font-bold">{testcase.input}</p>
-          <p>{testcase.output}</p>
-        </div>
-      ))}
-      <div className="h-full w-full">
-        <EditorWindow language="python" boilerplateCode={problem.runnerCode} />
-      </div>
+      {/* My Problem: {problemTitle} */}
+      <ResizablePanelGroup direction="horizontal">
+        <ResizablePanel defaultSize={50}>
+          <h1 className="text-2xl font-bold">{problem.name}</h1>
+          <p>{problem.description}</p>
+          {problem.examples.map((testcase, index) => (
+            <div key={index}>
+              <p className="font-bold">{testcase.input}</p>
+              <p>{testcase.output}</p>
+            </div>
+          ))}
+        </ResizablePanel>
+        <ResizableHandle />
+        <ResizablePanel defaultSize={50}>
+          <div className="h-full w-full">
+            <EditorWindow
+              language="python"
+              boilerplateCode={problem.boilerplateCode}
+            />
+          </div>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 }
