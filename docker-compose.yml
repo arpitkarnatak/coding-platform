@@ -2,23 +2,23 @@ name: "youtube"
 version: '3'
 
 services:
-  minio:
-    image: quay.io/minio/minio
-    container_name: minio
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    environment:
-      - MINIO_ROOT_USER=user
-      - MINIO_ROOT_PASSWORD=password
-    volumes:
-      - ./.data:/data
-    command: server /data --console-address ":9001"
-    user: "501:20" # UID
+  # minio:
+  #   image: quay.io/minio/minio
+  #   container_name: minio
+  #   ports:
+  #     - "9000:9000"
+  #     - "9001:9001"
+  #   environment:
+  #     - MINIO_ROOT_USER=user
+  #     - MINIO_ROOT_PASSWORD=password
+  #   volumes:
+  #     - ./.data:/data
+  #   command: server /data --console-address ":9001"
+  #   user: "501:20" # UID
 
   db:
     image: postgres:14.3
-    container_name: db
+    container_name: leetcode-db
     environment:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password

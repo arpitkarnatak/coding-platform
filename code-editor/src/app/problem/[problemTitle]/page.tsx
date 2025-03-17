@@ -1,34 +1,17 @@
 import EditorWindow from "@/components/Editor";
+import ProblemTag from "@/components/ProblemTag";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Problem, ProblemSchema } from "@/types/zod/problem";
 import React from "react";
 import { z } from "zod";
 
-const ProblemSchema = z.object({
-  name: z.string(),
-  description: z.string(),
-  examples: z
-    .object({
-      input: z.string(),
-      output: z.string(),
-    })
-    .array(),
-  hiddenTests: z
-    .object({
-      input: z.string(),
-      output: z.string(),
-    })
-    .array(),
-  runnerCode: z.string(),
-  boilerplateCode: z.string(),
-  // Add other fields as needed
-});
-
-// Type inference from the schema
-type Problem = z.infer<typeof ProblemSchema>;
+// TODO: Move schemas and validations on type folder
+// TODO: Have a separate type for problem and one for problem details
 
 async function fetchProblem(problemTitle: string): Promise<Problem> {
   // TODO: Replace w/ Base URL
@@ -62,21 +45,39 @@ export default async function ProblemPage({
       {/* My Problem: {problemTitle} */}
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel defaultSize={50}>
-          <h1 className="text-2xl font-bold">{problem.name}</h1>
-          <p>{problem.description}</p>
-          {problem.examples.map((testcase, index) => (
-            <div key={index}>
-              <p className="font-bold">{testcase.input}</p>
-              <p>{testcase.output}</p>
-            </div>
-          ))}
+          <h1 className="text-2xl font-bold">{problem.title}</h1>
+          {problem.difficulty}
+          <p>{problem.details.description}</p>
+          <Tabs defaultValue="0" className="w-[400px]">
+            <TabsList>
+              {problem.details.examples.map((_, index) => (
+                <TabsTrigger key={index} value={index.toString()}>
+                  Testcase {index}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            {problem.details.examples.map((testcase, index) => (
+              <TabsContent value={index.toString()} key={index}>
+                <div>
+                  <p className="font-bold">{testcase.input}</p>
+                  <p>{testcase.output}</p>
+                </div>
+              </TabsContent>
+            ))}
+          </Tabs>
+          <h1>Tags</h1>
+          <div className="flex flex-wrap w-full gap-2">
+            {problem.tags.map((tag) => (
+              <ProblemTag key={tag} content={tag} />
+            ))}
+          </div>
         </ResizablePanel>
         <ResizableHandle />
         <ResizablePanel defaultSize={50}>
           <div className="h-full w-full">
             <EditorWindow
               language="python"
-              boilerplateCode={problem.boilerplateCode}
+              boilerplateCode={problem.details.boilerplateCode}
             />
           </div>
         </ResizablePanel>

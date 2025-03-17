@@ -17,6 +17,9 @@ export default function EditorWindow(props: EditorWindowProps) {
       width={"100%"}
       value={code}
       theme="vs-dark"
+      onChange={(e) => {
+        setCode(e ?? "");
+      }}
     />
   );
 }
