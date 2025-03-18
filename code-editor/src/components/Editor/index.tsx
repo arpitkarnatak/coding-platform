@@ -2,9 +2,7 @@
 
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Editor } from "@monaco-editor/react";
-import { RefreshCcw } from "lucide-react";
 import useProblemPageStore from "@/lib/store";
-import { useRouter } from "next/navigation";
 
 interface EditorWindowProps {
   language: "python" | "javascript";

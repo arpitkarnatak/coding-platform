@@ -11,6 +11,7 @@ import EditorWindow from "../Editor";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { RefreshCcw } from "lucide-react";
 import useProblemPageStore from "@/lib/store";
+import { ScrollArea } from "../ui/scroll-area";
 
 export default function SolutionSection({
   problemDetails,
@@ -76,12 +77,8 @@ export default function SolutionSection({
             ))}
           </TabsList>
           {problemDetails.examples.map((testcase, index) => (
-            <TabsContent
-              value={index.toString()}
-              key={index}
-              className="overflow-scroll"
-            >
-              <div>
+            <TabsContent value={index.toString()} key={index}>
+              <div className="overflow-scroll">
                 <p>Input</p>
                 <p className="font-bold">{testcase.input}</p>
 
@@ -89,10 +86,15 @@ export default function SolutionSection({
                 <p>{testcase.output}</p>
                 {examplesResult[index] !== null && (
                   <>
-                    <p>Your Output</p>
-                    {examplesResult[index]?.stdout}
+                  {examplesResult[index]?.stderr == "" && <p className="text-green font-bold">Successful</p>}
+                    <p className="overflow-scroll">Your Output</p>
+                    <ScrollArea className="h-full max-h-[120px]">
+                      {examplesResult[index]?.stdout}
+                    </ScrollArea>
                     <p>Stderr</p>
-                    {examplesResult[index]?.stderr}
+                    <ScrollArea className="h-full max-h-[120px]">
+                      {examplesResult[index]?.stderr}
+                    </ScrollArea>
                   </>
                 )}
               </div>
