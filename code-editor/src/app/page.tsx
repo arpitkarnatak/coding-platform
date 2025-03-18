@@ -16,7 +16,8 @@ export default async function Home() {
     async (response) => await response.json()
   );
   return (
-    <div>
+    <div className="p-4">
+      <h1>Problemset</h1>
       <Table>
         <TableHeader>
           <TableRow>
@@ -29,7 +30,7 @@ export default async function Home() {
           {problemSet.map((problem: Problem) => (
             <TableRow key={problem.id}>
               <TableCell className="font-medium">
-                <Link href={`/problem/${problem.id}`}>{problem.title}</Link>
+                <Link href={`/problem/${problem.id}`} className="text-lg">{problem.title}</Link>
               </TableCell>
               <TableCell>{problem.difficulty}</TableCell>
               <TableCell className="flex gap-2 w-full">

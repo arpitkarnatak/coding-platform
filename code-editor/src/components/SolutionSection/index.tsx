@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { RefreshCcw } from "lucide-react";
 import useProblemPageStore from "@/lib/store";
 import { ScrollArea } from "../ui/scroll-area";
+import { Button } from "../ui/button";
 
 export default function SolutionSection({
   problemDetails,
@@ -26,38 +27,41 @@ export default function SolutionSection({
 
   return (
     <ResizablePanelGroup direction="vertical">
-      <ResizablePanel defaultSize={60}>
-        <div className="h-full w-full">
+      <ResizablePanel defaultSize={50}>
+        <div className="h-full w-full overflow-scroll">
           <div>
-            <div className="flex w-full border border-1">
+            <div className="flex w-full border border-1 p-2 justify-between">
               <p>Python</p>
-              <button
-                onClick={() => setUserCode(problemDetails.boilerplateCode)}
-              >
-                <RefreshCcw />
-              </button>
-              <button
-                onClick={async () => {
-                  try {
-                    const response = await fetch(
-                      "http://localhost:3000/api/v1/problem/test",
-                      {
-                        method: "POST",
-                        body: JSON.stringify({
-                          problemId: problemDetails.id,
-                          userCode,
-                        }),
-                      }
-                    ).then(async (res) => res.json());
-                    console.log(response);
-                    setResults(response.data);
-                  } catch (err) {
-                    console.error("Error", err);
-                  }
-                }}
-              >
-                Run
-              </button>
+              <div className="flex gap-2">
+                <Button
+                  variant={"secondary"}
+                  onClick={() => setUserCode(problemDetails.boilerplateCode)}
+                >
+                  <RefreshCcw />
+                </Button>
+                <Button
+                  onClick={async () => {
+                    try {
+                      const response = await fetch(
+                        "http://localhost:3000/api/v1/problem/test",
+                        {
+                          method: "POST",
+                          body: JSON.stringify({
+                            problemId: problemDetails.id,
+                            userCode,
+                          }),
+                        }
+                      ).then(async (res) => res.json());
+                      console.log(response);
+                      setResults(response.data);
+                    } catch (err) {
+                      console.error("Error", err);
+                    }
+                  }}
+                >
+                  Run
+                </Button>
+              </div>
             </div>
           </div>
           <EditorWindow
@@ -66,41 +70,55 @@ export default function SolutionSection({
           />
         </div>
       </ResizablePanel>
-      <ResizableHandle />
-      <ResizablePanel defaultSize={40}>
-        <Tabs defaultValue="0" className="w-[400px]">
-          <TabsList>
-            {problemDetails.examples.map((_, index) => (
-              <TabsTrigger key={index} value={index.toString()}>
-                Testcase {index}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-          {problemDetails.examples.map((testcase, index) => (
-            <TabsContent value={index.toString()} key={index}>
-              <div className="overflow-scroll">
-                <p>Input</p>
-                <p className="font-bold">{testcase.input}</p>
+      <ResizableHandle withHandle />
+      <ResizablePanel defaultSize={50} className="p-4">
+        <div className="h-full w-full overflow-scroll">
+          <Tabs defaultValue="0" className="w-full">
+            <TabsList>
+              {problemDetails.examples.map((_, index) => (
+                <TabsTrigger key={index} value={index.toString()}>
+                  Testcase {index}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            {problemDetails.examples.map((testcase, index) => (
+              <TabsContent value={index.toString()} key={index}>
+                <div>
+                  <h3>Input</h3>
+                  <p className="overflow-scroll bg-muted max-h-[120px] px-4 py-2 rounded-xl">
+                    {testcase.input}
+                  </p>
 
-                <p>Expected Result</p>
-                <p>{testcase.output}</p>
-                {examplesResult[index] !== null && (
-                  <>
-                  {examplesResult[index]?.stderr == "" && <p className="text-green font-bold">Successful</p>}
-                    <p className="overflow-scroll">Your Output</p>
-                    <ScrollArea className="h-full max-h-[120px]">
-                      {examplesResult[index]?.stdout}
-                    </ScrollArea>
-                    <p>Stderr</p>
-                    <ScrollArea className="h-full max-h-[120px]">
-                      {examplesResult[index]?.stderr}
-                    </ScrollArea>
-                  </>
-                )}
-              </div>
-            </TabsContent>
-          ))}
-        </Tabs>
+                  <h3>Expected Result</h3>
+                  <p className="overflow-scroll bg-muted max-h-[120px] px-4 py-2 rounded-xl">
+                    {testcase.output}
+                  </p>
+                  {examplesResult[index] !== null && (
+                    <div className="flex flex-col gap-4">
+                      {examplesResult[index]?.stderr == "" && (
+                        <p className="text-green font-bold">Successful</p>
+                      )}
+                      <h3>Your Output</h3>
+
+                      <p className="overflow-scroll bg-muted max-h-[120px] px-4 py-2 rounded-xl">
+                        {examplesResult[index]?.stdout}
+                      </p>
+
+                      {examplesResult[index]?.stderr && (
+                        <>
+                          <h3>Stderr</h3>
+                          <p className="overflow-scroll bg-muted max-h-[120px] px-4 py-2 rounded-xl">
+                            {examplesResult[index]?.stderr}
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+            ))}
+          </Tabs>
+        </div>
       </ResizablePanel>
     </ResizablePanelGroup>
   );
