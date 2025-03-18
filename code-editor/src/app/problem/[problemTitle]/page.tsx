@@ -1,5 +1,6 @@
 import EditorWindow from "@/components/Editor";
 import ProblemTag from "@/components/ProblemTag";
+import SolutionSection from "@/components/SolutionSection";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -8,7 +9,6 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Problem, ProblemSchema } from "@/types/zod/problem";
 import React from "react";
-import { z } from "zod";
 
 // TODO: Move schemas and validations on type folder
 // TODO: Have a separate type for problem and one for problem details
@@ -66,36 +66,7 @@ export default async function ProblemPage({
         </ResizablePanel>
         <ResizableHandle />
         <ResizablePanel defaultSize={50}>
-          <ResizablePanelGroup direction="vertical">
-            <ResizablePanel defaultSize={60}>
-              <div className="h-full w-full">
-                <EditorWindow
-                  language="python"
-                  boilerplateCode={problem.details.boilerplateCode}
-                />
-              </div>
-            </ResizablePanel>
-            <ResizableHandle />
-            <ResizablePanel defaultSize={40}>
-              <Tabs defaultValue="0" className="w-[400px]">
-                <TabsList>
-                  {problem.details.examples.map((_, index) => (
-                    <TabsTrigger key={index} value={index.toString()}>
-                      Testcase {index}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-                {problem.details.examples.map((testcase, index) => (
-                  <TabsContent value={index.toString()} key={index}>
-                    <div>
-                      <p className="font-bold">{testcase.input}</p>
-                      <p>{testcase.output}</p>
-                    </div>
-                  </TabsContent>
-                ))}
-              </Tabs>
-            </ResizablePanel>
-          </ResizablePanelGroup>
+          <SolutionSection problemDetails={problem.details} />
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>
