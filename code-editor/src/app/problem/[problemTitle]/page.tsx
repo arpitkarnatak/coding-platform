@@ -6,7 +6,6 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Problem, ProblemSchema } from "@/types/zod/problem";
 import React from "react";
 
@@ -41,30 +40,42 @@ export default async function ProblemPage({
   // TODO: Replace w/ Base URL
   const problem = await fetchProblem(problemTitle);
   return (
-    <div className="h-screen">
+    <div className="h-screen p-4">
       {/* My Problem: {problemTitle} */}
       <ResizablePanelGroup direction="horizontal">
-        <ResizablePanel defaultSize={50}>
-          <h1 className="text-2xl font-bold">{problem.title}</h1>
-          <ProblemTag content={problem.difficulty} />
+        <ResizablePanel defaultSize={50} className="p-4">
+          <div className="h-full w-full overflow-scroll">
+            <h1 className="font-bold">{problem.title}</h1>
+            <ProblemTag content={problem.difficulty} />
 
-          <p>{problem.details.description}</p>
-          <h1>Examples</h1>
-
-          {problem.details.examples.map((example, index) => (
-            <div key={index}>
-              <div>{example.input}</div>
-              <div>{example.output}</div>
+            <div className="my-4 bg-muted p-4 rounded-xl">
+              <p>{problem.details.description}</p>
             </div>
-          ))}
-          <h1>Tags</h1>
-          <div className="flex flex-wrap w-full gap-2">
-            {problem.tags.map((tag) => (
-              <ProblemTag key={tag} content={tag} />
-            ))}
+            <h2>Examples</h2>
+            <div className="flex flex-col gap-6">
+              {problem.details.examples.map((example, index) => (
+                <div key={index}>
+                  <h3>Testcase - {index}</h3>
+                  <h3>Input</h3>
+                  <div className="bg-muted p-2 rounded-xl">{example.input}</div>
+
+                  <h3>Output</h3>
+                  <div className="bg-muted p-2 rounded-xl">
+                    {example.output}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <h2>Tags</h2>
+            <div className="flex flex-wrap w-full gap-2">
+              {problem.tags.map((tag) => (
+                <ProblemTag key={tag} content={tag} />
+              ))}
+            </div>
           </div>
         </ResizablePanel>
-        <ResizableHandle />
+
+        <ResizableHandle withHandle />
         <ResizablePanel defaultSize={50}>
           <SolutionSection problemDetails={problem.details} />
         </ResizablePanel>

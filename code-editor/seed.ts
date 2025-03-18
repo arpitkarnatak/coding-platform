@@ -2,7 +2,8 @@ const { PrismaClient } = require("@prisma/client");
 const { v4: uuidv4 } = require("uuid"); // For generating unique IDs
 const prisma = new PrismaClient();
 
-// The problem data from your document
+// The problems dataset
+// This script is run with "npm run seed-db" to fill the database with list of problems.
 const problemSet = [
   {
     id: "simple-sum",
@@ -25,6 +26,8 @@ const problemSet = [
       },
     ],
     boilerplateCode: "def add_nums(a,b):\n\tpass",
+    difficulty: "Easy",
+    tags: ["Arithematic", "Operators"],
     runnerCode:
       'if __name__ == "__main__":\n    try:\n        with open("input.txt", "r") as f:\n            input_data = f.read().strip().split()\n            a, b = int(input_data[0]), int(input_data[1])\n        with open("expected_output.txt", "r") as f:\n            expected_output = int(f.read().strip())\n        find_sum = timeout(add_nums, 5) # Apply timeout\n        ans = add_nums(a, b)\n        print(ans)\n        assert ans == expected_output, "Output does not match expected output."\n    except TimeoutError:\n        print("Function timed out!")',
   },
@@ -34,10 +37,16 @@ const problemSet = [
     description: `You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only constraint stopping you from robbing each of them is that adjacent houses have security systems connected and it will automatically contact the police if two adjacent houses were broken into on the same night.
 
 Given an integer array nums representing the amount of money of each house, return the maximum amount of money you can rob tonight without alerting the police.`,
-    examples: [{ input: "1 2 3 1", output: "4" }, { input: "2 7 9 3 1", output: "12" }],
+    examples: [
+      { input: "1 2 3 1", output: "4" },
+      { input: "2 7 9 3 1", output: "12" },
+    ],
     hiddenTests: [{ input: "1 2 3 1", output: "4" }],
+    difficulty: "Medium",
+    tags: ["Dynamic Programming", "Recursion"],
     boilerplateCode: "def house_robber(nums):\n\tpass",
-    runnerCode: 'if __name__ == "__main__":\n    try:\n        with open("input.txt", "r") as f:\n            input_data = f.read().strip().split()\n            nums = [int(x) for x in input_data]\n        with open("expected_output.txt", "r") as f:\n            expected_output = int(f.read().strip())\n        house_rob = timeout(house_robber, 5) # Apply timeout\n        ans = house_rob(nums)\n        print(ans)\n        assert ans == expected_output, "Output does not match expected output."\n    except TimeoutError:\n        print("Function timed out!")'
+    runnerCode:
+      'if __name__ == "__main__":\n    try:\n        with open("input.txt", "r") as f:\n            input_data = f.read().strip().split()\n            nums = [int(x) for x in input_data]\n        with open("expected_output.txt", "r") as f:\n            expected_output = int(f.read().strip())\n        house_rob = timeout(house_robber, 5) # Apply timeout\n        ans = house_rob(nums)\n        print(ans)\n        assert ans == expected_output, "Output does not match expected output."\n    except TimeoutError:\n        print("Function timed out!")',
   },
 ];
 
@@ -66,8 +75,8 @@ async function seedDatabase() {
         data: {
           id: problem.id,
           title: problem.name,
-          difficulty: getDifficultyLevel(problem),
-          tags: getTagsForProblem(problem),
+          difficulty: problem.difficulty,
+          tags: problem.tags,
         },
       });
 
@@ -80,55 +89,6 @@ async function seedDatabase() {
   } finally {
     await prisma.$disconnect();
   }
-}
-
-// Helper function to determine difficulty level
-function getDifficultyLevel(problem) {
-  if (
-    problem.id === "two-sum" ||
-    problem.id === "string-anagrams" ||
-    problem.id == "simple-sum"
-  ) {
-    return "Easy";
-  } else if (
-    problem.id === "binary-search-tree-validate" ||
-    problem.id === "merge-intervals"
-  ) {
-    return "Medium";
-  } else if (problem.id === "lru-cache") {
-    return "Hard";
-  }
-
-  // Default difficulty
-  return "Medium";
-}
-
-// Helper function to generate tags based on problem characteristics
-function getTagsForProblem(problem) {
-  const tags = [];
-
-  // Add tags based on problem ID and characteristics
-  switch (problem.id) {
-    case "simple-sum":
-      tags.push("Arithematic");
-    case "two-sum":
-      tags.push("Array", "Hash Table");
-      break;
-    case "binary-search-tree-validate":
-      tags.push("Tree", "Depth-First Search", "Binary Search Tree");
-      break;
-    case "lru-cache":
-      tags.push("Design", "Hash Table", "Linked List");
-      break;
-    case "merge-intervals":
-      tags.push("Array", "Sorting");
-      break;
-    case "string-anagrams":
-      tags.push("String", "Hash Table", "Sliding Window");
-      break;
-  }
-
-  return tags;
 }
 
 // Run the seeding function
