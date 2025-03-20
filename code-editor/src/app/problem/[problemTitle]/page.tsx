@@ -7,6 +7,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { Card } from "@/components/ui/card";
 import { Problem, ProblemSchema } from "@/types/zod/problem";
 import React from "react";
 
@@ -43,8 +44,8 @@ export default async function ProblemPage({
   return (
     <div className="h-screen p-4">
       <ResizablePanelGroup direction="horizontal">
-        <ResizablePanel defaultSize={50} className="p-4">
-          <div className="h-full w-full overflow-scroll">
+        <ResizablePanel defaultSize={50}>
+          <Card className="h-full w-full overflow-scroll">
             <h1 className="font-bold">{problem.title}</h1>
             <ProblemTag content={problem.difficulty} />
 
@@ -72,7 +73,7 @@ export default async function ProblemPage({
                 <ProblemTag key={tag} content={tag} />
               ))}
             </div>
-          </div>
+          </Card>
         </ResizablePanel>
 
         <ResizableHandle withHandle />
