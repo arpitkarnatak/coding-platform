@@ -41,7 +41,6 @@ export default async function ProblemPage({
   const problem = await fetchProblem(problemTitle);
   return (
     <div className="h-screen p-4">
-      {/* My Problem: {problemTitle} */}
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel defaultSize={50} className="p-4">
           <div className="h-full w-full overflow-scroll">
