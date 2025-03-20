@@ -1,6 +1,7 @@
 import EditorWindow from "@/components/Editor";
 import ProblemTag from "@/components/ProblemTag";
 import SolutionSection from "@/components/SolutionSection";
+import SubmissionSection from "@/components/Submissions";
 import {
   ResizableHandle,
   ResizablePanel,

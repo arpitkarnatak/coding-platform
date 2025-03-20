@@ -53,34 +53,25 @@ Given an integer array nums representing the amount of money of each house, retu
 // Function to seed the database
 async function seedDatabase() {
   try {
-    // Process each problem in the problem set
     for (const problem of problemSet) {
-      // Create a unique ID for the ProblemDetail
-      const detailId = problem.id;
-
-      // First create the ProblemDetail
-      const problemDetail = await prisma.problemDetail.create({
-        data: {
-          id: detailId,
-          description: problem.description,
-          examples: problem.examples,
-          hiddenTests: problem.hiddenTests,
-          boilerplateCode: problem.boilerplateCode,
-          runnerCode: problem.runnerCode,
-        },
-      });
-
-      // Then create the Problem with reference to the ProblemDetail
       await prisma.problem.create({
         data: {
           id: problem.id,
           title: problem.name,
           difficulty: problem.difficulty,
           tags: problem.tags,
+          details: {  // ✅ Create ProblemDetail inline
+            create: {
+              id: problem.id, // Same ID as Problem
+              description: problem.description,
+              examples: problem.examples,
+              hiddenTests: problem.hiddenTests,
+              boilerplateCode: problem.boilerplateCode,
+              runnerCode: problem.runnerCode,
+            },
+          },
         },
       });
-
-      console.log(`Problem '${problem.name}' added successfully.`);
     }
 
     console.log("Database seeding completed successfully!");

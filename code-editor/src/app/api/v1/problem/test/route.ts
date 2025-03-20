@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma/prisma_utils";
 import { ProblemDetail } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import { v4 as uuidv4 } from "uuid";
 
 export async function POST(request: NextRequest) {
   const requestBody = await request.json();
@@ -48,6 +49,10 @@ export async function POST(request: NextRequest) {
         }).then(async (response) => await response.json())
       )
     );
+
+    await prisma.submission.create({
+      data: { id: uuidv4(), code: userCode, problemId },
+    });
 
     return NextResponse.json({
       data: answers.map((item) => item.status == "fulfilled" && item.value),
