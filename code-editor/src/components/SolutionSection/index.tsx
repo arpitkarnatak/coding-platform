@@ -9,11 +9,12 @@ import {
 } from "../ui/resizable";
 import EditorWindow from "../Editor";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { RefreshCcw } from "lucide-react";
+import { Loader2, RefreshCcw } from "lucide-react";
 import useProblemPageStore from "@/lib/store";
 import { ScrollArea } from "../ui/scroll-area";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
+import useRunCode from "@/hooks/useRunCode";
 
 export default function SolutionSection({
   problemDetails,
@@ -25,6 +26,14 @@ export default function SolutionSection({
   useLayoutEffect(() => {
     setResults(Array(problemDetails.examples.length).fill(null));
   }, []);
+
+  const {
+    data: runCodeResult,
+    isPending: runningCode,
+    isError: errorRunningCode,
+    isIdle: runCodeIdle,
+    mutate: runCode,
+  } = useRunCode();
 
   return (
     <ResizablePanelGroup direction="vertical">
@@ -41,26 +50,15 @@ export default function SolutionSection({
                   <RefreshCcw />
                 </Button>
                 <Button
-                  onClick={async () => {
-                    try {
-                      const response = await fetch(
-                        "http://localhost:3000/api/v1/problem/test",
-                        {
-                          method: "POST",
-                          body: JSON.stringify({
-                            problemId: problemDetails.id,
-                            userCode,
-                          }),
-                        }
-                      ).then(async (res) => res.json());
-                      console.log(response);
-                      setResults(response.data);
-                    } catch (err) {
-                      console.error("Error", err);
-                    }
-                  }}
+                  onClick={() =>
+                    runCode({
+                      problemId: problemDetails.id,
+                      userCode: userCode,
+                    })
+                  }
                 >
-                  Run
+                  {runCodeIdle && "Run"}
+                  {runningCode && <Loader2 className="animate-spin" />}
                 </Button>
               </div>
             </div>
@@ -100,6 +98,23 @@ export default function SolutionSection({
                       <p className="overflow-scroll bg-muted max-h-[120px] px-4 py-2 rounded-xl">
                         {testcase.output}
                       </p>
+
+                      {runCodeResult && (
+                        <>
+                          <p>Your Output</p>
+                          <p className="overflow-scroll bg-muted max-h-[120px] px-4 py-2 rounded-xl">
+                            {runCodeResult[index]?.stdout}
+                          </p>
+                          {runCodeResult[index].stderr && (
+                            <>
+                              <p>Stderr</p>
+                              <p className="overflow-scroll bg-muted max-h-[120px] px-4 py-2 rounded-xl">
+                                {runCodeResult[index]?.stderr}
+                              </p>
+                            </>
+                          )}
+                        </>
+                      )}
                     </div>
                   </TabsContent>
                 ))}

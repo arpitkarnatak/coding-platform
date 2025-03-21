@@ -50,14 +50,15 @@ export async function POST(request: NextRequest) {
       )
     );
 
-    await prisma.submission.create({
-      data: { id: uuidv4(), code: userCode, problemId },
-    });
 
     return NextResponse.json({
       data: answers.map((item) => item.status == "fulfilled" && item.value),
     });
-  } catch (err) {}
+  } catch (err) {
+    return NextResponse.json({
+      error: "Unexpected error",
+    });
+  }
 }
 
 // curl -X POST APPWRITE_FUNCTION_ENDPOINT \

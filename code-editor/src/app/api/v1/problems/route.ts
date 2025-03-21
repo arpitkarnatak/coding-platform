@@ -5,5 +5,5 @@ export async function GET() {
   const prisma = new PrismaClient();
 
   const problems = await prisma.problem.findMany();
-  return NextResponse.json(problems, { status: 200 });
+  return NextResponse.json({ data: problems }, { status: 200 });
 }
