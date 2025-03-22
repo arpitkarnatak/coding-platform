@@ -1,6 +1,7 @@
 "use client";
 import React, { useCallback, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
+import api from "@/lib/axios";
 
 export default function useRunCode() {
   const [data, setData] = useState();
@@ -19,17 +20,11 @@ export default function useRunCode() {
       setIsIdle(false);
       setIsPending(true);
       try {
-        const response = await fetch(
-          "http://localhost:3000/api/v1/problem/test",
-          {
-            method: "POST",
-            body: JSON.stringify({
-              problemId: problemId,
-              userCode,
-            }),
-          }
-        ).then(async (res) => res.json());
-        setData(response.data);
+        const response = await api.post("/problem/test", {
+          problemId,
+          userCode,
+        });
+        setData(response.data.data);
       } catch (err) {
         setIsError(true);
       }

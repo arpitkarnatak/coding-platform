@@ -1,4 +1,5 @@
 import ProblemTag from "@/components/ProblemTag";
+import { Card } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -7,24 +8,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import api from "@/lib/axios";
 import { Problem } from "@/types/zod/problem";
 import Link from "next/link";
 
+async function fetchProblems(): Promise<Problem[] | void> {
+  const response = await api.get("/problems");
+  return response.data.data;
+}
+
 export default async function Home() {
-  const response = await fetch("http://localhost:3000/api/v1/problems");
-
-  if (!response.ok) {
-    return (
-      <div className="p-4">
-        <h1>Problemset</h1>
-        An error loading problem set
-      </div>
-    );
+  const problemSet = await fetchProblems().catch((err) => {
+    err;
+  });
+  if (!problemSet) {
+    return <>erro</>;
   }
-
-  const problemSet = await response.json();
   return (
-    <div className="p-4">
+    <Card>
       <h1>Problemset</h1>
       <Table>
         <TableHeader>
@@ -52,6 +53,6 @@ export default async function Home() {
           ))}
         </TableBody>
       </Table>
-    </div>
+    </Card>
   );
 }

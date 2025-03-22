@@ -10,20 +10,17 @@ import {
 import { Card } from "@/components/ui/card";
 import { Problem, ProblemSchema } from "@/types/zod/problem";
 import React from "react";
+import api from "@/lib/axios";
 
 // TODO: Move schemas and validations on type folder
 // TODO: Have a separate type for problem and one for problem details
 
 async function fetchProblem(problemTitle: string): Promise<Problem> {
   // TODO: Replace w/ Base URL
-  const response = await fetch(
-    `http://localhost:3000/api/v1/problem/${problemTitle}`
-  );
-
-  const data = await response.json();
+  const response = await api.get(`/problem/${problemTitle}`);
 
   // Validate the response data against the schema
-  const result = ProblemSchema.safeParse(data);
+  const result = ProblemSchema.safeParse(response.data.data);
   if (!result.success) {
     // Handle validation errors
     console.error("API response validation failed:", result.error.format());
@@ -42,7 +39,7 @@ export default async function ProblemPage({
   // TODO: Replace w/ Base URL
   const problem = await fetchProblem(problemTitle);
   return (
-    <div className="h-screen p-4">
+    <div className="h-full flex-1">
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel defaultSize={50}>
           <Card className="h-full w-full overflow-scroll">

@@ -38,9 +38,9 @@ export default function SolutionSection({
   return (
     <ResizablePanelGroup direction="vertical">
       <ResizablePanel defaultSize={50}>
-        <Card className="h-full w-full overflow-scroll p-0">
+        <Card className="h-full w-full p-0 overflow-hidden">
           <div>
-            <div className="flex w-full border border-1 p-2 justify-between">
+            <div className="flex sticky top-0 w-full border border-1 p-2 justify-between">
               <p>Python</p>
               <div className="flex gap-2">
                 <Button

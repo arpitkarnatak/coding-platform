@@ -2,6 +2,16 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import {
+  ClerkProvider,
+  SignInButton,
+  SignOutButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -18,11 +28,30 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} antialiased h-screen`}>
-        {children}
-        <Toaster />
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body
+          className={`${inter.className} antialiased h-screen flex flex-col p-4 gap-4`}
+        >
+          <div className="flex justify-end items-center gap-4 h-16">
+            <SignedOut>
+              <SignInButton mode="modal">
+                <Button>Sign in</Button>
+              </SignInButton>
+
+              <SignUpButton />
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+              <SignOutButton>
+                <Button variant={"destructive"}>Sign Out</Button>
+              </SignOutButton>
+            </SignedIn>
+          </div>
+          {children}
+          <Toaster />
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

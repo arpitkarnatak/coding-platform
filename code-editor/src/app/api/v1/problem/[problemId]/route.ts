@@ -17,17 +17,20 @@ export async function GET(
       details: {
         omit: {
           hiddenTests: true,
-          runnerCode: true
-        }
-      }
-    }
+          runnerCode: true,
+        },
+      },
+    },
   });
 
   if (!problemFromDb) {
     return NextResponse.json({}, { status: 404 });
   }
   console.log("problem", problemFromDb);
-  return NextResponse.json(problemFromDb, {
-    status: 200,
-  });
+  return NextResponse.json(
+    { data: problemFromDb },
+    {
+      status: 200,
+    }
+  );
 }
